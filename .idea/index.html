@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laundry Shop - Quản Lý Giặt Ủi Thông Minh</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app-container">
+  <aside class="sidebar">
+    <div class="logo-section">
+      <div class="logo-image-wrapper">
+        <img src="images/Screenshot%202026-05-25%20115701.png" alt="Logo" class="logo-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/9721/9721115.png'">
+      </div>
+      <div class="logo-text">
+        <h2>Tuấn Hưng</h2>
+        <p>Hệ thống giặt ủi thông minh</p>
+      </div>
+    </div>
+    <nav class="sidebar-menu">
+      <p class="menu-label">MENU</p>
+      <a href="#" class="menu-item active" data-target="dashboard-page"><i class="ri-home-4-line"></i> Trang chủ</a>
+      <a href="#" class="menu-item" data-target="orders-page"><i class="ri-file-list-3-line"></i> Đơn giặt ủi</a>
+      <a href="#" class="menu-item" data-target="customers-page"><i class="ri-user-shared-line"></i> Khách hàng</a>
+      <a href="#" class="menu-item" data-target="services-page"><i class="ri-customer-service-2-line"></i> Dịch vụ</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="version-badge">V 1.0.0</div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <button class="toggle-sidebar-btn"><i class="ri-menu-2-line"></i></button>
+
+      <div class="user-profile">
+        <button class="notification-btn">
+          <i class="ri-notification-3-line"></i>
+          <span class="notification-badge"></span>
+        </button>
+
+        <div class="profile-divider"></div>
+
+        <div class="profile-info">
+          <span class="user-name">Tuấn Hưng Shop</span>
+          <span class="user-role"><span class="role-dot"></span>Chủ cửa hàng</span>
+        </div>
+
+        <div class="avatar-wrapper">
+          <img src="images/Screenshot%202026-05-25%20115701.png" alt="Avatar" class="avatar">
+        </div>
+      </div>
+    </header>
+
+    <div class="content-body">
+
+      <section class="page-section active" id="dashboard-page">
+        <div class="page-title-area">
+          <h1>Tổng quan hệ thống ngày hôm nay</h1>
+        </div>
+
+        <div class="stats-grid">
+
+          <div class="stat-card dashboard-card-click" data-target="orders-page" style="cursor: pointer;">
+            <div class="stat-icon icon-blue"><i class="ri-file-text-line"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="dash-orders-count">0</span>
+              <span class="stat-label">Đơn mới</span>
+            </div>
+          </div>
+
+          <div class="stat-card dashboard-card-click" data-target="customers-page" style="cursor: pointer;">
+            <div class="stat-icon icon-green"><i class="ri-user-heart-line"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="dash-cust-count">0</span>
+              <span class="stat-label">Khách hàng</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon icon-orange"><i class="ri-settings-5-line"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="dash-serv-count">0</span>
+              <span class="stat-label">Gói dịch vụ</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon icon-red"><i class="ri-money-dollar-circle-line"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="dash-total-revenue">0đ</span>
+              <span class="stat-label">Doanh thu tạm tính</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="dashboard-card">
+            <h3>🔥 Các đơn hàng vừa tiếp nhận</h3>
+            <div class="table-container">
+              <table class="modern-table">
+                <thead>
+                <tr>
+                  <th>Mã Đơn</th>
+                  <th>Khách hàng</th>
+                  <th>Dịch vụ</th>
+                  <th>Trạng thái</th>
+                </tr>
+                </thead>
+                <tbody id="recent-orders-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="dashboard-card">
+            <h3>📊 Tỷ trọng dịch vụ ăn khách</h3>
+            <div id="services-progress-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page-section" id="orders-page">
+        <div class="page-title-area">
+          <h1>Quản lý đơn giặt ủi</h1>
+        </div>
+        <div class="filter-bar">
+          <div class="search-wrapper">
+            <i class="ri-search-line"></i>
+            <input type="text" id="order-search-input" placeholder="Tìm nhanh theo tên khách hàng...">
+          </div>
+          <button class="btn btn-primary" id="open-order-modal-btn"><i class="ri-add-line"></i> Thêm đơn mới</button>
+        </div>
+        <div class="table-container">
+          <table class="modern-table">
+            <thead>
+            <tr><th>ID</th><th>Khách hàng</th><th>Dịch vụ</th><th>Giá tiền</th><th>Trạng thái</th><th>Hành động</th></tr>
+            </thead>
+            <tbody id="order-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="page-section" id="customers-page">
+        <div class="page-title-area">
+          <h1>Danh mục hồ sơ khách hàng</h1>
+        </div>
+        <div class="filter-bar">
+          <div class="search-wrapper">
+            <i class="ri-search-line"></i>
+            <input type="text" id="cust-search-input" placeholder="Tìm theo tên hoặc số điện thoại...">
+          </div>
+          <button class="btn btn-primary" id="open-cust-modal-btn"><i class="ri-user-add-line"></i> Đăng ký khách hàng mới</button>
+        </div>
+        <div class="table-container">
+          <table class="modern-table">
+            <thead>
+            <tr><th>Mã KH</th><th>Họ và Tên</th><th>Số điện thoại</th><th>Địa chỉ</th><th>Hành động</th></tr>
+            </thead>
+            <tbody id="customer-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="page-section" id="services-page">
+        <div class="page-title-area">
+          <h1>Bảng giá gói dịch vụ</h1>
+        </div>
+        <div class="filter-bar" style="justify-content: flex-end;">
+          <button class="btn btn-primary" id="open-serv-modal-btn"><i class="ri-add-box-line"></i> Thêm dịch vụ mới</button>
+        </div>
+        <div class="table-container">
+          <table class="modern-table">
+            <thead>
+            <tr><th>Tên Dịch Vụ</th><th>Giá cơ bản</th><th>Đơn vị tính</th><th>Hành động</th></tr>
+            </thead>
+            <tbody id="services-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<div class="modal" id="order-modal">
+  <div class="modal-content">
+    <h3 id="order-modal-title">Thêm Đơn Giặt Ủi Mới</h3>
+    <form id="order-form" style="margin-top:16px;">
+      <input type="hidden" id="form-order-id">
+      <div class="form-group"><label>Tên khách hàng</label><input type="text" id="form-order-name" required></div>
+      <div class="form-group">
+        <label>Dịch vụ</label>
+        <select id="form-order-service"></select>
+      </div>
+      <div class="form-group"><label>Giá tiền (đ)</label><input type="number" id="form-order-price" required></div>
+      <div class="form-group">
+        <label>Trạng thái</label>
+        <select id="form-order-status">
+          <option value="Đang xử lý">Đang xử lý</option>
+          <option value="Đã hoàn thành">Đã hoàn thành</option>
+        </select>
+      </div>
+      <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+        <button type="button" class="btn btn-secondary close-modal-btn">Hủy bỏ</button>
+        <button type="submit" class="btn btn-primary">Xác nhận</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal" id="cust-modal">
+  <div class="modal-content">
+    <h3 id="cust-modal-title">Thêm Khách Hàng Mới</h3>
+    <form id="cust-form" style="margin-top:16px;">
+      <input type="hidden" id="form-cust-id">
+      <div class="form-group"><label>Tên khách hàng</label><input type="text" id="form-cust-name" required></div>
+      <div class="form-group"><label>Số điện thoại</label><input type="text" id="form-cust-phone" required></div>
+      <div class="form-group"><label>Địa chỉ</label><input type="text" id="form-cust-address" required></div>
+      <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+        <button type="button" class="btn btn-secondary close-modal-btn">Hủy bỏ</button>
+        <button type="submit" class="btn btn-primary">Lưu lại</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal" id="serv-modal">
+  <div class="modal-content">
+    <h3 id="serv-modal-title">Thêm Gói Dịch Vụ Mới</h3>
+    <form id="serv-form" style="margin-top:16px;">
+      <input type="hidden" id="form-serv-id">
+      <div class="form-group"><label>Tên dịch vụ</label><input type="text" id="form-serv-name" required></div>
+      <div class="form-group"><label>Giá tiền (đ)</label><input type="number" id="form-serv-price" required></div>
+      <div class="form-group"><label>Đơn vị tính</label><input type="text" id="form-serv-unit" placeholder="kg, chiếc, bộ..." required></div>
+      <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+        <button type="button" class="btn btn-secondary close-modal-btn">Hủy bỏ</button>
+        <button type="submit" class="btn btn-primary">Áp dụng</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<!--<script src="js/dropdown.js"></script>-->
+</body>
+</html>

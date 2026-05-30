@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Laundry Shop - Quản lý đơn hàng</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="app-container">
+  <aside class="sidebar">
+    <div class="logo-section">
+      <i class="ri-washing-machine-line logo-icon"></i>
+      <div class="logo-text"><h2>Laundry Shop</h2><p>Hệ thống giặt ủi thông minh</p></div>
+    </div>
+    <nav class="sidebar-menu">
+      <p class="menu-label">MENU</p>
+      <a href="../index.html" class="menu-item"><i class="ri-home-4-line"></i> Trang chủ</a>
+      <a href="orders.html" class="menu-item active"><i class="ri-file-list-3-line"></i> Đơn giặt ủi</a>
+      <a href="customers.html" class="menu-item"><i class="ri-user-shared-line"></i> Khách hàng</a>
+      <a href="services.html" class="menu-item"><i class="ri-customer-service-2-line"></i> Dịch vụ</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <button class="toggle-sidebar-btn"><i class="ri-menu-2-line"></i></button>
+      <div class="user-profile"><span class="user-name">Admin</span></div>
+    </header>
+
+    <div class="content-body">
+      <div class="page-title-area"><h1>Danh sách đơn giặt ủi</h1></div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon icon-blue"><i class="ri-file-text-line"></i></div>
+          <div class="stat-info"><span class="stat-value" id="stat-total">0</span><span class="stat-label">Tổng đơn</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon icon-green"><i class="ri-checkbox-circle-line"></i></div>
+          <div class="stat-info"><span class="stat-value" id="stat-success">0</span><span class="stat-label">Đã hoàn thành</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon icon-orange"><i class="ri-time-line"></i></div>
+          <div class="stat-info"><span class="stat-value" id="stat-pending">0</span><span class="stat-label">Đang xử lý</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon icon-red"><i class="ri-money-dollar-box-line"></i></div>
+          <div class="stat-info"><span class="stat-value" id="stat-revenue">0đ</span><span class="stat-label">Doanh thu tạm tính</span></div>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <div class="search-wrapper"><i class="ri-search-line"></i><input type="text" id="search-input" placeholder="Tìm tên khách hàng..."></div>
+        <button class="btn btn-primary" id="open-modal-btn"><i class="ri-add-line"></i> Tạo đơn hàng mới</button>
+      </div>
+
+      <div class="table-container">
+        <table class="modern-table">
+          <thead>
+          <tr><th>ID</th><th>Khách hàng</th><th>Dịch vụ</th><th>Giá tiền</th><th>Trạng thái</th><th>Hành động</th></tr>
+          </thead>
+          <tbody id="order-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="modal" id="order-modal">
+  <div class="modal-content">
+    <h3 id="modal-title">Thêm Đơn Hàng Mới</h3>
+    <form id="order-form" style="margin-top:16px;">
+      <input type="hidden" id="form-id">
+      <div class="form-group"><label>Tên khách hàng</label><input type="text" id="form-name" required></div>
+      <div class="form-group">
+        <label>Dịch vụ</label>
+        <select id="form-service">
+          <option value="Giặt sấy lấy liền">Giặt sấy lấy liền</option>
+          <option value="Giặt khô là hơi">Giặt khô là hơi</option>
+          <option value="Giặt hấp gấu bông">Giặt hấp gấu bông</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Giá tiền (đ)</label><input type="number" id="form-price" required></div>
+      <div class="form-group"><label>Trạng thái</label><select id="form-status"><option value="Đang xử lý">Đang xử lý</option><option value="Đã hoàn thành">Đã hoàn thành</option></select></div>
+      <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+        <button type="button" class="btn btn-secondary" id="close-modal-btn">Hủy</button>
+        <button type="submit" class="btn btn-primary">Xác nhận</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="js/orders.js"></script>
+</body>
+</html>

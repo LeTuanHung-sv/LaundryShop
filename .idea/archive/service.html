@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Laundry Shop - Danh mục dịch vụ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="app-container">
+  <aside class="sidebar">
+    <div class="logo-section">
+      <i class="ri-washing-machine-line logo-icon"></i>
+      <div class="logo-text"><h2>Laundry Shop</h2><p>Hệ thống giặt ủi thông minh</p></div>
+    </div>
+    <nav class="sidebar-menu">
+      <p class="menu-label">MENU</p>
+      <a href="../index.html" class="menu-item"><i class="ri-home-4-line"></i> Trang chủ</a>
+      <a href="orders.html" class="menu-item"><i class="ri-file-list-3-line"></i> Đơn giặt ủi</a>
+      <a href="customers.html" class="menu-item"><i class="ri-user-shared-line"></i> Khách hàng</a>
+      <a href="services.html" class="menu-item active"><i class="ri-customer-service-2-line"></i> Dịch vụ</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <button class="toggle-sidebar-btn"><i class="ri-menu-2-line"></i></button>
+      <div class="user-profile"><span class="user-name">Admin</span></div>
+    </header>
+
+    <div class="content-body">
+      <div class="page-title-area"><h1>Bảng giá gói dịch vụ</h1></div>
+
+      <div class="filter-bar" style="justify-content: flex-end;">
+        <button class="btn btn-primary" id="open-serv-btn"><i class="ri-add-box-line"></i> Thêm dịch vụ mới</button>
+      </div>
+
+      <div class="table-container">
+        <table class="modern-table">
+          <thead>
+          <tr><th>Tên Dịch Vụ</th><th>Giá cơ bản</th><th>Đơn vị</th><th>Hành động</th></tr>
+          </thead>
+          <tbody id="services-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="modal" id="serv-modal">
+  <div class="modal-content">
+    <h3 id="serv-modal-title">Cấu hình dịch vụ</h3>
+    <form id="serv-form" style="margin-top:16px;">
+      <input type="hidden" id="serv-id">
+      <div class="form-group"><label>Tên dịch vụ</label><input type="text" id="serv-name" required></div>
+      <div class="form-group"><label>Đơn giá (đ)</label><input type="number" id="serv-price" required></div>
+      <div class="form-group"><label>Đơn vị tính</label><input type="text" id="serv-unit" placeholder="Ví dụ: kg, chiếc, bộ..." required></div>
+      <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+        <button type="button" class="btn btn-secondary" id="close-serv-btn">Hủy</button>
+        <button type="submit" class="btn btn-primary">Áp dụng</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="js/services.js"></script>
+</body>
+</html>

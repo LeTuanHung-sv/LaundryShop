@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Laundry Shop - Quản lý khách hàng</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="app-container">
+  <aside class="sidebar">
+    <div class="logo-section">
+      <i class="ri-washing-machine-line logo-icon"></i>
+      <div class="logo-text"><h2>Laundry Shop</h2><p>Hệ thống giặt ủi thông minh</p></div>
+    </div>
+    <nav class="sidebar-menu">
+      <p class="menu-label">MENU</p>
+      <a href="../index.html" class="menu-item"><i class="ri-home-4-line"></i> Trang chủ</a>
+      <a href="orders.html" class="menu-item"><i class="ri-file-list-3-line"></i> Đơn giặt ủi</a>
+      <a href="customers.html" class="menu-item active"><i class="ri-user-shared-line"></i> Khách hàng</a>
+      <a href="services.html" class="menu-item"><i class="ri-customer-service-2-line"></i> Dịch vụ</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <button class="toggle-sidebar-btn"><i class="ri-menu-2-line"></i></button>
+      <div class="user-profile"><span class="user-name">Admin</span></div>
+    </header>
+
+    <div class="content-body">
+      <div class="page-title-area"><h1>Danh mục hồ sơ khách hàng</h1></div>
+
+      <div class="filter-bar">
+        <div class="search-wrapper"><i class="ri-search-line"></i><input type="text" id="search-cust" placeholder="Tìm số điện thoại hoặc tên..."></div>
+        <button class="btn btn-primary" id="open-cust-btn"><i class="ri-user-add-line"></i> Đăng ký khách hàng mới</button>
+      </div>
+
+      <div class="table-container">
+        <table class="modern-table">
+          <thead>
+          <tr><th>Mã KH</th><th>Họ và Tên</th><th>Số điện thoại</th><th>Địa chỉ</th><th>Hành động</th></tr>
+          </thead>
+          <tbody id="customer-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="modal" id="cust-modal">
+  <div class="modal-content">
+    <h3 id="cust-modal-title">Thêm Khách Hàng Mới</h3>
+    <form id="cust-form" style="margin-top:16px;">
+      <input type="hidden" id="cust-id">
+      <div class="form-group"><label>Tên khách hàng</label><input type="text" id="cust-name" required></div>
+      <div class="form-group"><label>Số điện thoại</label><input type="text" id="cust-phone" required></div>
+      <div class="form-group"><label>Địa chỉ nhà</label><input type="text" id="cust-address" required></div>
+      <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+        <button type="button" class="btn btn-secondary" id="close-cust-btn">Hủy</button>
+        <button type="submit" class="btn btn-primary">Lưu lại</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="js/customers.js"></script>
+</body>
+</html>
