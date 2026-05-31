@@ -827,3 +827,147 @@ body {
 .panel-links hr { border: none; border-top: 1px solid #f1f5f9; margin: 6px 0; }
 .panel-links a.logout-link { color: var(--danger-color); }
 .panel-links a.logout-link:hover { background: #fee2e2; }
+
+.labs-container {
+    background-color: #1a1c24; /* Màu nền tối như trong hình */
+    padding: 30px;
+    border-radius: 12px;
+}
+
+.lab-header-badge {
+    background-color: #e67e22; /* Màu cam của nút tiêu đề */
+    color: white;
+    padding: 10px 25px;
+    border-radius: 30px;
+    display: inline-block;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+.lab-grid-custom {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* Chia 5 cột như hình */
+    gap: 15px;
+}
+
+.lab-box {
+    background-color: #1e212d; /* Màu của từng ô Lab */
+    border: 1px solid #2c303d;
+    border-radius: 15px;
+    padding: 20px;
+    min-height: 200px;
+    transition: 0.3s;
+}
+
+.lab-box:hover {
+    border-color: #e67e22; /* Hiệu ứng hover viền cam */
+}
+
+.lab-box h3 {
+    color: #e67e22; /* Chữ Lab 01, 02 màu cam */
+    margin-top: 0;
+    border-bottom: 1px solid #2c303d;
+    padding-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+.lab-links {
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+}
+
+.lab-links li {
+    margin-bottom: 8px;
+}
+
+.lab-links a {
+    color: #a0a5b1; /* Màu chữ bài con */
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.lab-links a:hover {
+    color: #fff;
+}
+
+/* --- HIỆU ỨNG CHO CÁC THẺ BÀI TẬP LAB --- */
+
+/* 1. Hiệu ứng cho toàn bộ khung thẻ Lab */
+#labs-page div[style*="background-color: #1e212d"] {
+    transition: all 0.3s ease-in-out !important; /* Tạo độ mượt khi biến đổi */
+    cursor: default;
+}
+
+#labs-page div[style*="background-color: #1e212d"]:hover {
+    transform: translateY(-8px); /* Thẻ bay nhẹ lên trên */
+    border-color: #e67e22 !important; /* Đổi viền sang màu cam thương hiệu */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4); /* Thêm đổ bóng cho cảm giác nổi khối */
+}
+
+/* 2. Hiệu ứng cho các đường link văn bản (Lab1_3, Lab1_4...) */
+#labs-page ul li a {
+    transition: color 0.2s ease;
+}
+
+#labs-page ul li a:hover {
+    color: #e67e22 !important; /* Chữ đổi sang màu cam khi chỉ vào */
+    text-decoration: underline !important; /* Gạch chân để biết là link */
+}
+
+/* 3. Hiệu ứng cho nút "Xem chi tiết" màu xanh */
+#labs-page a[style*="background-color: #5cb85c"] {
+    transition: all 0.3s ease !important;
+    display: block; /* Đảm bảo nút trải dài dễ bấm */
+}
+
+#labs-page a[style*="background-color: #5cb85c"]:hover {
+    background-color: #4cae4c !important; /* Màu xanh đậm hơn một chút */
+    filter: brightness(1.2); /* Làm nút sáng bừng lên */
+    letter-spacing: 1px; /* Chữ dãn ra một chút nhìn rất chuyên nghiệp */
+    box-shadow: 0 4px 12px rgba(92, 184, 92, 0.4); /* Đổ bóng màu xanh xung quanh nút */
+}
+
+/* Hiệu ứng thẻ Lab nâng cao */
+#labs-page .lab-card {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #2c303d !important;
+}
+
+/* Khi rê chuột vào thẻ */
+#labs-page .lab-card:hover {
+    transform: translateY(-12px) scale(1.02); /* Bay lên và phóng to nhẹ */
+    border-color: #ff7e5f !important; /* Đổi màu viền Gradient */
+    box-shadow: 0 15px 30px rgba(230, 126, 34, 0.2); /* Đổ bóng cam nhẹ */
+}
+
+/* Hiệu ứng tia sáng chạy ngang qua thẻ khi hover */
+#labs-page .lab-card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    transition: 0.5s;
+}
+
+#labs-page .lab-card:hover::after {
+    left: 100%;
+}
+
+/* Nút "Xem chi tiết" kiểu mới */
+#labs-page .btn-detail {
+    background: linear-gradient(45deg, #5cb85c, #4cae4c) !important;
+    border: none !important;
+    position: relative;
+    z-index: 1;
+}
+
+#labs-page .btn-detail:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 0 15px rgba(92, 184, 92, 0.6) !important;
+}

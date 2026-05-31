@@ -1,371 +1,278 @@
-// ==============================================================================
-// --- KHỞI TẠO DỮ LIỆU ĐỘNG TỪ LOCALSTORAGE (NẾU CHƯA CÓ SẼ LẤY MẪU MẶC ĐỊNH) ---
-// ==============================================================================
+let services = JSON.parse(localStorage.getItem('laundry_services')) || [];
+let customers = JSON.parse(localStorage.getItem('laundry_customers')) || [];
+let orders = JSON.parse(localStorage.getItem('laundry_orders')) || [];
 
-// 1. Mảng dữ liệu gói dịch vụ
-let services = JSON.parse(localStorage.getItem('laundry_services')) || [
-    { id: 'SRV-001', name: 'Giặt sấy lấy liền', price: 15000, unit: 'kg' },
-    { id: 'SRV-002', name: 'Giặt khô là hơi', price: 35000, unit: 'chiếc' },
-    { id: 'SRV-003', name: 'Giặt gấu bông lớn', price: 50000, unit: 'con' }
-];
-
-// 2. Mảng dữ liệu quản lý hồ sơ khách hàng
-let customers = JSON.parse(localStorage.getItem('laundry_customers')) || [
-    { id: 'KH-1001', name: 'Lê Tuấn Hưng', phone: '0901234567', address: 'Quận 8, TP.HCM' },
-    { id: 'KH-1002', name: 'Lê Tuấn David', phone: '0912345678', address: 'Quận 1, TP.HCM' }
-];
-
-// 3. Mảng dữ liệu các đơn giặt ủi
-let orders = JSON.parse(localStorage.getItem('laundry_orders')) || [
-    { id: '#ORD-7222', name: 'Lê Tuấn David', service: 'Giặt sấy lấy liền', price: 45000, status: 'Đang xử lý' },
-    { id: '#ORD-1003', name: 'Lê Tuấn Hưng', service: 'Giặt khô là hơi', price: 170000, status: 'Đã hoàn thành' }
-];
-
-// Hàm ghi nhớ đồng bộ mảng dữ liệu vào sâu trong bộ nhớ trình duyệt (LocalStorage)
 function saveDataToStorage() {
     localStorage.setItem('laundry_services', JSON.stringify(services));
     localStorage.setItem('laundry_customers', JSON.stringify(customers));
     localStorage.setItem('laundry_orders', JSON.stringify(orders));
 }
 
-// ==============================================================================
-// --- KHỞI CHẠY HỆ THỐNG VÀ XỬ LÝ CHUYỂN TRANG SPA ---
-// ==============================================================================
 document.addEventListener("DOMContentLoaded", function () {
+    //Chạy bộ điều hướng Menu (SPA)
+    initNavigation();
+
+    //Vẽ dữ liệu lên các bảng và thống kê
+    renderAllData();
+
+    //Khởi tạo bộ đóng/mở Modal và Tìm kiếm
+    initModalControls();
+    initSearchFilters();
+});
+
+function initNavigation() {
     const menuItems = document.querySelectorAll(".menu-item");
     const sections = document.querySelectorAll(".page-section");
 
-    // Xử lý click chuyển tab mượt mà trên Sidebar Menu trái
     menuItems.forEach(item => {
         item.addEventListener("click", function (e) {
             e.preventDefault();
+
+            // Làm nổi bật menu đang chọn
             menuItems.forEach(i => i.classList.remove("active"));
             this.classList.add("active");
 
             const targetId = this.getAttribute("data-target");
+
+            // Ẩn tất cả các Section và hiển thị Section đích
             sections.forEach(sec => {
                 sec.classList.remove("active");
+                sec.style.display = "none";
+
                 if (sec.id === targetId) {
                     sec.classList.add("active");
+                    // Riêng trang Lab nếu em muốn dùng hiển thị đặc biệt có thể chỉnh ở đây
+                    sec.style.display = "block";
+
+                    // Hiệu ứng Fade In nhẹ
+                    sec.style.opacity = "0";
+                    setTimeout(() => { sec.style.opacity = "1"; sec.style.transition = "0.3s"; }, 10);
                 }
             });
         });
     });
 
-    // TÍNH NĂNG THÊM: Click trúng các Thẻ thống kê Dashboard tự động nhảy nhanh trang
-    const dashboardCards = document.querySelectorAll(".dashboard-card-click");
-    dashboardCards.forEach(card => {
+    // Điều hướng nhanh từ Dashboard
+    document.querySelectorAll(".dashboard-card-click").forEach(card => {
         card.addEventListener("click", function () {
-            const targetPageId = this.getAttribute("data-target");
-            const matchingMenu = document.querySelector(`.menu-item[data-target="${targetPageId}"]`);
-            if (matchingMenu) matchingMenu.click();
+            const target = this.getAttribute("data-target");
+            const menu = document.querySelector(`.menu-item[data-target="${target}"]`);
+            if (menu) menu.click();
         });
     });
+}
 
-    // Kích hoạt nạp dữ liệu vẽ bảng lần đầu tiên
-    renderAllData();
-    initModalControls();
-    initSearchFilters();
-});
-
-// ==============================================================================
-// --- HÀM VẼ GIAO DIỆN (RENDER DATA TO TABLES) ---
-// ==============================================================================
 function renderAllData() {
-    // 1. Đếm số lượng cập nhật lên các thẻ Thống kê ở Trang chủ
-    document.getElementById("dash-orders-count").innerText = orders.filter(o => o.status === "Đang xử lý").length;
-    document.getElementById("dash-cust-count").innerText = customers.length;
-    document.getElementById("dash-serv-count").innerText = services.length;
-    
-    // Tính tổng tiền doanh thu tích lũy động
+    // 1. Cập nhật Dashboard
+    const countOrders = document.getElementById("dash-orders-count");
+    if(countOrders) countOrders.innerText = orders.filter(o => o.status === "Đang xử lý").length;
+
+    const countCust = document.getElementById("dash-cust-count");
+    if(countCust) countCust.innerText = customers.length;
+
+    const countServ = document.getElementById("dash-serv-count");
+    if(countServ) countServ.innerText = services.length;
+
     const totalRev = orders.reduce((sum, o) => sum + Number(o.price), 0);
-    document.getElementById("dash-total-revenue").innerText = totalRev.toLocaleString('vi-VN') + "đ";
+    const revEl = document.getElementById("dash-total-revenue");
+    if(revEl) revEl.innerText = totalRev.toLocaleString('vi-VN') + "đ";
 
-    // 2. Đổ dữ liệu đơn hàng vừa tiếp nhận ra bảng phụ ở Dashboard
-    const recentOrdersTbody = document.getElementById("recent-orders-tbody");
-    recentOrdersTbody.innerHTML = "";
-    orders.slice(-4).reverse().forEach(order => {
-        const statusClass = order.status === "Đã hoàn thành" ? "status-success" : "status-warning";
-        recentOrdersTbody.innerHTML += `
-            <tr>
-                <td><strong>${order.id}</strong></td>
-                <td>${order.name}</td>
-                <td>${order.service}</td>
-                <td><span class="badge ${statusClass}">${order.status}</span></td>
-            </tr>
-        `;
-    });
+    // 2. Render bảng Đơn hàng
+    const orderBody = document.getElementById("order-table-body");
+    if (orderBody) {
+        orderBody.innerHTML = orders.length === 0
+            ? `<tr><td colspan="6" style="text-align:center; padding:30px; color:#999;">Chưa có đơn hàng nào.</td></tr>`
+            : orders.map((o, i) => `
+                <tr>
+                    <td><strong>${o.id}</strong></td>
+                    <td>${o.name}</td>
+                    <td>${o.service}</td>
+                    <td>${Number(o.price).toLocaleString('vi-VN')}đ</td>
+                    <td><span class="badge ${o.status === 'Đã hoàn thành' ? 'status-success' : 'status-warning'}">${o.status}</span></td>
+                    <td>
+                        <button class="action-btn btn-edit" onclick="editOrder(${i})"><i class="ri-edit-line"></i></button>
+                        <button class="action-btn btn-delete" onclick="deleteOrder(${i})"><i class="ri-delete-bin-line"></i></button>
+                    </td>
+                </tr>`).join('');
+    }
 
-    // 3. Đổ dữ liệu tiến độ tỷ trọng dịch vụ ăn khách giả lập
-    const progressList = document.getElementById("services-progress-list");
-    progressList.innerHTML = "";
-    services.slice(0, 3).forEach((srv, i) => {
-        const fakePct = [70, 45, 20][i] || 15;
-        progressList.innerHTML += `
-            <div style="margin-bottom: 12px;">
-                <div style="display:flex; justify-content:space-between; font-size:11pt; margin-bottom:4px;">
-                    <span>${srv.name}</span>
-                    <strong>${fakePct}%</strong>
-                </div>
-                <div style="background:#eef2f5; height:6px; border-radius:4px; overflow:hidden;">
-                    <div style="background:var(--primary-color, #4361ee); width:${fakePct}%; height:100%;"></div>
-                </div>
-            </div>
-        `;
-    });
+    // 3. Render bảng Khách hàng
+    const custBody = document.getElementById("customer-table-body");
+    if (custBody) {
+        custBody.innerHTML = customers.length === 0
+            ? `<tr><td colspan="5" style="text-align:center; padding:30px; color:#999;">Chưa có khách hàng.</td></tr>`
+            : customers.map((c, i) => `
+                <tr>
+                    <td><strong>${c.id}</strong></td>
+                    <td>${c.name}</td>
+                    <td>${c.phone}</td>
+                    <td>${c.address}</td>
+                    <td>
+                        <button class="action-btn btn-edit" onclick="editCustomer(${i})"><i class="ri-edit-line"></i></button>
+                        <button class="action-btn btn-delete" onclick="deleteCustomer(${i})"><i class="ri-delete-bin-line"></i></button>
+                    </td>
+                </tr>`).join('');
+    }
 
-    // 4. Render bảng dữ liệu chính cho trang: Đơn giặt ủi
-    const orderTableBody = document.getElementById("order-table-body");
-    orderTableBody.innerHTML = "";
-    orders.forEach((order, index) => {
-        const statusClass = order.status === "Đã hoàn thành" ? "status-success" : "status-warning";
-        orderTableBody.innerHTML += `
-            <tr>
-                <td><strong>${order.id}</strong></td>
-                <td>${order.name}</td>
-                <td>${order.service}</td>
-                <td>${Number(order.price).toLocaleString('vi-VN')}đ</td>
-                <td><span class="badge ${statusClass}">${order.status}</span></td>
-                <td>
-                    <button class="action-btn btn-edit" onclick="editOrder(${index})"><i class="ri-edit-line"></i> Sửa</button>
-                    <button class="action-btn btn-delete" onclick="deleteOrder(${index})"><i class="ri-delete-bin-line"></i> Xóa</button>
-                </td>
-            </tr>
-        `;
-    });
+    // 4. Render bảng Dịch vụ
+    const servBody = document.getElementById("services-table-body");
+    if (servBody) {
+        servBody.innerHTML = services.length === 0
+            ? `<tr><td colspan="4" style="text-align:center; padding:30px; color:#999;">Chưa có dịch vụ.</td></tr>`
+            : services.map((s, i) => `
+                <tr>
+                    <td><strong>${s.name}</strong></td>
+                    <td>${Number(s.price).toLocaleString('vi-VN')}đ</td>
+                    <td>/${s.unit}</td>
+                    <td>
+                        <button class="action-btn btn-edit" onclick="editService(${i})"><i class="ri-edit-line"></i></button>
+                        <button class="action-btn btn-delete" onclick="deleteService(${i})"><i class="ri-delete-bin-line"></i></button>
+                    </td>
+                </tr>`).join('');
+    }
 
-    // 5. Render bảng dữ liệu chính cho trang: Khách hàng
-    const customerTableBody = document.getElementById("customer-table-body");
-    customerTableBody.innerHTML = "";
-    customers.forEach((cust, index) => {
-        customerTableBody.innerHTML += `
-            <tr>
-                <td><strong>${cust.id}</strong></td>
-                <td>${cust.name}</td>
-                <td>${cust.phone}</td>
-                <td>${cust.address}</td>
-                <td>
-                    <button class="action-btn btn-edit" onclick="editCustomer(${index})"><i class="ri-edit-line"></i> Sửa</button>
-                    <button class="action-btn btn-delete" onclick="deleteCustomer(${index})"><i class="ri-delete-bin-line"></i> Xóa</button>
-                </td>
-            </tr>
-        `;
-    });
-
-    // 6. Render bảng dữ liệu chính cho trang: Gói dịch vụ
-    const servicesTableBody = document.getElementById("services-table-body");
-    servicesTableBody.innerHTML = "";
-    services.forEach((srv, index) => {
-        servicesTableBody.innerHTML += `
-            <tr>
-                <td><strong>${srv.name}</strong></td>
-                <td>${Number(srv.price).toLocaleString('vi-VN')}đ</td>
-                <td>/${srv.unit}</td>
-                <td>
-                    <button class="action-btn btn-edit" onclick="editService(${index})"><i class="ri-edit-line"></i> Sửa</button>
-                    <button class="action-btn btn-delete" onclick="deleteService(${index})"><i class="ri-delete-bin-line"></i> Xóa</button>
-                </td>
-            </tr>
-        `;
-    });
-
-    // ĐỒNG BỘ: Tự động cập nhật menu thả xuống (Dropdown Select) trong Modal thêm Đơn hàng
-    const selectService = document.getElementById("form-order-service");
-    if(selectService) {
-        selectService.innerHTML = "";
-        services.forEach(srv => {
-            selectService.innerHTML += `<option value="${srv.name}">${srv.name} (${srv.price}đ/${srv.unit})</option>`;
-        });
+    // Cập nhật Dropdown chọn dịch vụ trong Form đơn hàng
+    const selectSrv = document.getElementById("form-order-service");
+    if(selectSrv) {
+        selectSrv.innerHTML = services.length === 0
+            ? `<option value="">-- Cần thêm dịch vụ trước --</option>`
+            : services.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
     }
 }
 
-// ==============================================================================
-// --- ĐIỀU KHIỂN ĐÓNG MỞ MODAL & SỰ KIỆN SUBMIT LƯU DỮ LIỆU ĐỘNG ---
-// ==============================================================================
 function initModalControls() {
-    // Nút mở modal Đơn hàng
-    document.getElementById("open-order-modal-btn").addEventListener("click", () => {
-        document.getElementById("order-modal-title").innerText = "Thêm Đơn Giặt Ủi Mới";
+    // Mở Modal
+    const safeClick = (id, fn) => { const el = document.getElementById(id); if(el) el.onclick = fn; };
+
+    safeClick("open-order-modal-btn", () => {
+        document.getElementById("order-modal-title").innerText = "Thêm Đơn Mới";
         document.getElementById("order-form").reset();
         document.getElementById("form-order-id").value = "";
         document.getElementById("order-modal").classList.add("active");
     });
 
-    // Nút mở modal Khách hàng
-    document.getElementById("open-cust-modal-btn").addEventListener("click", () => {
-        document.getElementById("cust-modal-title").innerText = "Đăng ký khách hàng mới";
+    safeClick("open-cust-modal-btn", () => {
+        document.getElementById("cust-modal").classList.add("active");
         document.getElementById("cust-form").reset();
         document.getElementById("form-cust-id").value = "";
-        document.getElementById("cust-modal").classList.add("active");
     });
 
-    // Nút mở modal Dịch vụ
-    document.getElementById("open-serv-modal-btn").addEventListener("click", () => {
-        document.getElementById("serv-modal-title").innerText = "Thêm Gói Dịch Vụ Mới";
+    safeClick("open-serv-modal-btn", () => {
+        document.getElementById("serv-modal").classList.add("active");
         document.getElementById("serv-form").reset();
         document.getElementById("form-serv-id").value = "";
-        document.getElementById("serv-modal").classList.add("active");
     });
 
-    // Đóng nhanh bất kỳ modal nào khi click nút Hủy bỏ
+    // Đóng Modal
     document.querySelectorAll(".close-modal-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            document.querySelectorAll(".modal").forEach(m => m.classList.remove("active"));
-        });
+        btn.onclick = () => document.querySelectorAll(".modal").forEach(m => m.classList.remove("active"));
     });
 
-    // --- FORM SUBMIT: XỬ LÝ LƯU (THÊM HOẶC SỬA) ĐƠN HÀNG ---
-    document.getElementById("order-form").addEventListener("submit", function (e) {
-        e.preventDefault();
-        const editId = document.getElementById("form-order-id").value;
-        const name = document.getElementById("form-order-name").value;
-        const service = document.getElementById("form-order-service").value;
-        const price = document.getElementById("form-order-price").value;
-        const status = document.getElementById("form-order-status").value;
+    // Xử lý Submit Order
+    const orderForm = document.getElementById("order-form");
+    if(orderForm) {
+        orderForm.onsubmit = (e) => {
+            e.preventDefault();
+            const id = document.getElementById("form-order-id").value;
+            const data = {
+                name: document.getElementById("form-order-name").value,
+                service: document.getElementById("form-order-service").value,
+                price: document.getElementById("form-order-price").value,
+                status: document.getElementById("form-order-status").value
+            };
 
-        if (editId !== "") {
-            // Đang ở chế độ Sửa
-            const idx = Number(editId);
-            orders[idx].name = name;
-            orders[idx].service = service;
-            orders[idx].price = Number(price);
-            orders[idx].status = status;
-        } else {
-            // Đang ở chế độ Thêm mới -> Tự động sinh mã Đơn hàng ngẫu nhiên ngầu đét
-            const randId = "#ORD-" + Math.floor(1000 + Math.random() * 9000);
-            orders.push({ id: randId, name, service, price: Number(price), status });
-        }
-        
-        saveDataToStorage(); // CẬP NHẬT GHI NHỚ VÀO TRÌNH DUYỆT
-        renderAllData();     // Làm mới bảng ngay tắp lự
-        document.getElementById("order-modal").classList.remove("active");
-    });
+            if(id !== "") {
+                orders[id] = { ...orders[id], ...data };
+            } else {
+                orders.push({ id: "#ORD-" + Math.floor(1000+Math.random()*9000), ...data });
+            }
+            saveDataToStorage(); renderAllData();
+            document.getElementById("order-modal").classList.remove("active");
+        };
+    }
 
-    // --- FORM SUBMIT: XỬ LÝ LƯU KHÁCH HÀNG ---
-    document.getElementById("cust-form").addEventListener("submit", function (e) {
-        e.preventDefault();
-        const editId = document.getElementById("form-cust-id").value;
-        const name = document.getElementById("form-cust-name").value;
-        const phone = document.getElementById("form-cust-phone").value;
-        const address = document.getElementById("form-cust-address").value;
+    // Xử lý Submit Customer
+    const custForm = document.getElementById("cust-form");
+    if(custForm) {
+        custForm.onsubmit = (e) => {
+            e.preventDefault();
+            const id = document.getElementById("form-cust-id").value;
+            const data = {
+                name: document.getElementById("form-cust-name").value,
+                phone: document.getElementById("form-cust-phone").value,
+                address: document.getElementById("form-cust-address").value
+            };
+            if(id !== "") { customers[id] = {...customers[id], ...data}; }
+            else { customers.push({ id: "KH-" + Math.floor(1000+Math.random()*9000), ...data }); }
+            saveDataToStorage(); renderAllData();
+            document.getElementById("cust-modal").classList.remove("active");
+        };
+    }
 
-        if (editId !== "") {
-            const idx = Number(editId);
-            customers[idx].name = name;
-            customers[idx].phone = phone;
-            customers[idx].address = address;
-        } else {
-            const randId = "KH-" + Math.floor(1000 + Math.random() * 9000);
-            customers.push({ id: randId, name, phone, address });
-        }
-        
-        saveDataToStorage();
-        renderAllData();
-        document.getElementById("cust-modal").classList.remove("active");
-    });
-
-    // --- FORM SUBMIT: XỬ LÝ LƯU GÓI DỊCH VỤ ---
-    document.getElementById("serv-form").addEventListener("submit", function (e) {
-        e.preventDefault();
-        const editId = document.getElementById("form-serv-id").value;
-        const name = document.getElementById("form-serv-name").value;
-        const price = document.getElementById("form-serv-price").value;
-        const unit = document.getElementById("form-serv-unit").value;
-
-        if (editId !== "") {
-            const idx = Number(editId);
-            services[idx].name = name;
-            services[idx].price = Number(price);
-            services[idx].unit = unit;
-        } else {
-            const randId = "SRV-" + Math.floor(100 + Math.random() * 900);
-            services.push({ id: randId, name, price: Number(price), unit });
-        }
-        
-        saveDataToStorage();
-        renderAllData();
-        document.getElementById("serv-modal").classList.remove("active");
-    });
+    // Xử lý Submit Service
+    const servForm = document.getElementById("serv-form");
+    if(servForm) {
+        servForm.onsubmit = (e) => {
+            e.preventDefault();
+            const id = document.getElementById("form-serv-id").value;
+            const data = {
+                name: document.getElementById("form-serv-name").value,
+                price: document.getElementById("form-serv-price").value,
+                unit: document.getElementById("form-serv-unit").value
+            };
+            if(id !== "") { services[id] = {...services[id], ...data}; }
+            else { services.push(data); }
+            saveDataToStorage(); renderAllData();
+            document.getElementById("serv-modal").classList.remove("active");
+        };
+    }
 }
 
-// ==============================================================================
-// --- ĐỘNG LỰC HỌC KHỐI SỬA / XÓA DỮ LIỆU ĐỘNG (BẢO TOÀN TRẠNG THÁI) ---
-// ==============================================================================
-function editOrder(index) {
-    document.getElementById("order-modal-title").innerText = "Chỉnh Sửa Đơn Hàng";
-    document.getElementById("form-order-id").value = index;
-    document.getElementById("form-order-name").value = orders[index].name;
-    document.getElementById("form-order-service").value = orders[index].service;
-    document.getElementById("form-order-price").value = orders[index].price;
-    document.getElementById("form-order-status").value = orders[index].status;
+window.editOrder = (i) => {
+    document.getElementById("order-modal-title").innerText = "Sửa Đơn Hàng";
+    document.getElementById("form-order-id").value = i;
+    document.getElementById("form-order-name").value = orders[i].name;
+    document.getElementById("form-order-service").value = orders[i].service;
+    document.getElementById("form-order-price").value = orders[i].price;
+    document.getElementById("form-order-status").value = orders[i].status;
     document.getElementById("order-modal").classList.add("active");
-}
+};
 
-function deleteOrder(index) {
-    if (confirm("Hệ thống: Bạn có chắc chắn muốn xóa vĩnh viễn đơn hàng này?")) {
-        orders.splice(index, 1);
-        saveDataToStorage(); // Đồng bộ xóa khỏi LocalStorage
-        renderAllData();     // Vẽ lại bảng sạch dữ liệu
-    }
-}
+window.deleteOrder = (i) => { if(confirm("Xóa đơn này?")) { orders.splice(i, 1); saveDataToStorage(); renderAllData(); } };
 
-function editCustomer(index) {
-    document.getElementById("cust-modal-title").innerText = "Cập Nhật Hồ Sơ Khách Hàng";
-    document.getElementById("form-cust-id").value = index;
-    document.getElementById("form-cust-name").value = customers[index].name;
-    document.getElementById("form-cust-phone").value = customers[index].phone;
-    document.getElementById("form-cust-address").value = customers[index].address;
+window.editCustomer = (i) => {
+    document.getElementById("form-cust-id").value = i;
+    document.getElementById("form-cust-name").value = customers[i].name;
+    document.getElementById("form-cust-phone").value = customers[i].phone;
+    document.getElementById("form-cust-address").value = customers[i].address;
     document.getElementById("cust-modal").classList.add("active");
-}
+};
 
-function deleteCustomer(index) {
-    if (confirm("Hệ thống: Xác nhận xóa thông tin khách hàng này?")) {
-        customers.splice(index, 1);
-        saveDataToStorage();
-        renderAllData();
-    }
-}
+window.deleteCustomer = (i) => { if(confirm("Xóa khách này?")) { customers.splice(i, 1); saveDataToStorage(); renderAllData(); } };
 
-// Tương tự cho sửa xóa dịch vụ gói
-function editService(index) {
-    document.getElementById("serv-modal-title").innerText = "Sửa Thông Tin Gói Dịch Vụ";
-    document.getElementById("form-serv-id").value = index;
-    document.getElementById("form-serv-name").value = services[index].name;
-    document.getElementById("form-serv-price").value = services[index].price;
-    document.getElementById("form-serv-unit").value = services[index].unit;
+window.editService = (i) => {
+    document.getElementById("form-serv-id").value = i;
+    document.getElementById("form-serv-name").value = services[i].name;
+    document.getElementById("form-serv-price").value = services[i].price;
+    document.getElementById("form-serv-unit").value = services[i].unit;
     document.getElementById("serv-modal").classList.add("active");
-}
+};
 
-function deleteService(index) {
-    if (confirm("Hệ thống: Xác nhận xóa gói dịch vụ này khỏi danh mục bảng giá công khai?")) {
-        services.splice(index, 1);
-        saveDataToStorage();
-        renderAllData();
-    }
-}
+window.deleteService = (i) => { if(confirm("Xóa dịch vụ?")) { services.splice(i, 1); saveDataToStorage(); renderAllData(); } };
 
-// ==============================================================================
-// --- CHỨC NĂNG TÌM KIẾM BỘ LỌC CHẠY LIVE SIÊU TỐC ---
-// ==============================================================================
 function initSearchFilters() {
-    // Tìm kiếm Live Đơn hàng theo Tên khách hàng khách đặt
-    document.getElementById("order-search-input").addEventListener("input", function() {
-        const keyword = this.value.toLowerCase().trim();
-        const rows = document.querySelectorAll("#order-table-body tr");
-        rows.forEach(row => {
-            const name = row.cells[1].innerText.toLowerCase();
-            row.style.display = name.includes(keyword) ? "" : "none";
-        });
-    });
-
-    // Tìm kiếm Live Khách hàng song song cả Tên và Số điện thoại cùng lúc
-    document.getElementById("cust-search-input").addEventListener("input", function() {
-        const keyword = this.value.toLowerCase().trim();
-        const rows = document.querySelectorAll("#customer-table-body tr");
-        rows.forEach(row => {
-            const name = row.cells[1].innerText.toLowerCase();
-            const phone = row.cells[2].innerText.toLowerCase();
-            row.style.display = (name.includes(keyword) || phone.includes(keyword)) ? "" : "none";
-        });
-    });
+    const setupSearch = (inputId, tableId, colIdx) => {
+        const input = document.getElementById(inputId);
+        if(input) {
+            input.oninput = function() {
+                const val = this.value.toLowerCase();
+                document.querySelectorAll(`#${tableId} tr`).forEach(row => {
+                    const txt = row.cells[colIdx]?.innerText.toLowerCase() || "";
+                    row.style.display = txt.includes(val) ? "" : "none";
+                });
+            };
+        }
+    };
+    setupSearch("order-search-input", "order-table-body", 1);
+    setupSearch("cust-search-input", "customer-table-body", 1);
 }
