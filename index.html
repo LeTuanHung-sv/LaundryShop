@@ -34,7 +34,6 @@
       <a href="#" class="menu-item" data-target="services-page">
         <i class="ri-price-tag-3-line"></i> Dịch vụ
       </a>
-      <!-- CHỨC NĂNG MỚI THÊM VÀO -->
       <a href="#" class="menu-item" data-target="inventory-page">
         <i class="ri-archive-line"></i> Quản lý kho (Xà phòng, vải)
       </a>
@@ -69,7 +68,7 @@
 
     <div class="content-body">
 
-      <section class="page-section" id="dashboard-page">
+      <section class="page-section active" id="dashboard-page">
         <div class="page-title-area">
           <h1>Tổng quan hệ thống ngày hôm nay</h1>
         </div>
@@ -109,20 +108,25 @@
             <div class="table-container">
               <table class="modern-table">
                 <thead>
-                <tr><th>Mã Đơn</th><th>Khách hàng</th><th>Dịch vụ</th><th>Trạng thái</th></tr>
+                <tr>
+                  <th>Mã Đơn</th>
+                  <th>Khách hàng</th>
+                  <th>Dịch vụ</th>
+                  <th>Trạng thái</th>
+                </tr>
                 </thead>
-                <tbody id="recent-orders-tbody"></tbody>
+                <tbody id="dashboard-order-body"></tbody>
               </table>
             </div>
           </div>
           <div class="dashboard-card">
             <h3>📊 Tỷ trọng dịch vụ ăn khách</h3>
-            <div id="services-progress-list"></div>
+            <div id="dashboard-services-chart"></div>
           </div>
         </div>
       </section>
 
-      <section class="page-section active" id="orders-page">
+      <section class="page-section" id="orders-page">
         <div class="page-title-area">
           <h1>Quản lý đơn giặt ủi</h1>
         </div>
@@ -188,11 +192,11 @@
         </div>
 
         <div class="filter-bar">
-          <div class="search-box">
+          <div class="search-wrapper">
             <i class="ri-search-line"></i>
-            <input type="text" placeholder="Tìm kiếm vật tư trong kho...">
+            <input type="text" id="inv-search-input" placeholder="Tìm kiếm vật tư trong kho...">
           </div>
-          <button class="btn btn-primary" style="background-color: #e67e22;">
+          <button class="btn btn-primary" id="open-inv-modal-btn" style="background-color: #e67e22;">
             <i class="ri-add-line"></i> Nhập kho vật tư
           </button>
         </div>
@@ -206,31 +210,10 @@
               <th>LOẠI</th>
               <th>TỒN KHO THỰC TẾ</th>
               <th>TRẠNG THÁI</th>
+              <th>HÀNH ĐỘNG</th>
             </tr>
             </thead>
-            <tbody>
-            <tr>
-              <td><strong>#VT-001</strong></td>
-              <td>Xà phòng giặt OMO Pro</td>
-              <td>Bột giặt / Nước giặt</td>
-              <td><strong>45 Kg</strong></td>
-              <td><span class="badge status-success">Còn nhiều</span></td>
-            </tr>
-            <tr>
-              <td><strong>#VT-002</strong></td>
-              <td>Nước xả vải Comfort Ban Mai</td>
-              <td>Nước xả vải</td>
-              <td><strong>8 Lít</strong></td>
-              <td><span class="badge status-warning" style="background: #f39c12; color: white;">Sắp hết</span></td>
-            </tr>
-            <tr>
-              <td><strong>#VT-003</strong></td>
-              <td>Tẩy quần áo màu AXO</td>
-              <td>Hóa chất tẩy rửa</td>
-              <td><strong>1.5 Lít</strong></td>
-              <td><span class="badge" style="background: #e74c3c; color: white;">Cảnh báo hết</span></td>
-            </tr>
-            </tbody>
+            <tbody id="inventory-table-body"></tbody>
           </table>
         </div>
       </section>
@@ -241,69 +224,38 @@
           <p>Thống kê chi tiết doanh thu và hiệu suất cửa hàng</p>
         </div>
 
-        <div class="dashboard-grid" style="margin-bottom: 25px;">
-          <div class="dashboard-card" style="border-left: 4px solid #3498db;">
+        <div class="report-stats-grid">
+          <div class="report-stat-card card-blue">
             <div class="card-data">
-              <h3 style="color: #3498db;">15.420.000đ</h3>
-              <p>Doanh thu tháng này</p>
+              <h3 id="report-month-revenue">0đ</h3>
+              <p>Doanh thu hệ thống (Tổng)</p>
             </div>
           </div>
-          <div class="dashboard-card" style="border-left: 4px solid #2ecc71;">
+          <div class="report-stat-card card-green">
             <div class="card-data">
-              <h3 style="color: #2ecc71;">340 Kg</h3>
-              <p>Tổng khối lượng đã giặt</p>
+              <h3 id="report-total-orders">0 Đơn</h3>
+              <p>Tổng số đơn hàng ghi nhận</p>
             </div>
           </div>
-          <div class="dashboard-card" style="border-left: 4px solid #9b59b6;">
+          <div class="report-stat-card card-purple">
             <div class="card-data">
-              <h3 style="color: #9b59b6;">98.5%</h3>
+              <h3 id="report-success-rate">0%</h3>
               <p>Tỷ lệ hoàn thành đúng hẹn</p>
             </div>
           </div>
         </div>
 
         <div class="dashboard-layout-two">
-          <div class="layout-left table-container" style="padding: 20px;">
-            <h3 style="margin-bottom: 20px;"><i class="ri-bar-chart-line"></i> Biểu đồ tăng trưởng doanh thu tuần này</h3>
-
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; height: 200px; padding: 10px 20px; background: #fafafa; border-radius: 8px; border-bottom: 2px solid #ddd;">
-              <div style="display:flex; flex-direction:column; align-items:center; width:12%;">
-                <div style="background:#bdc3c7; width:100%; height:45px; border-radius:4px 4px 0 0; text-align:center; color:white; font-size:9pt; padding-top:5px;">450k</div>
-                <span style="font-size:10pt; margin-top:8px; color:#555;">Thứ 2</span>
-              </div>
-              <div style="display:flex; flex-direction:column; align-items:center; width:12%;">
-                <div style="background:#bdc3c7; width:100%; height:70px; border-radius:4px 4px 0 0; text-align:center; color:white; font-size:9pt; padding-top:5px;">700k</div>
-                <span style="font-size:10pt; margin-top:8px; color:#555;">Thứ 3</span>
-              </div>
-              <div style="display:flex; flex-direction:column; align-items:center; width:12%;">
-                <div style="background:#bdc3c7; width:100%; height:55px; border-radius:4px 4px 0 0; text-align:center; color:white; font-size:9pt; padding-top:5px;">550k</div>
-                <span style="font-size:10pt; margin-top:8px; color:#555;">Thứ 4</span>
-              </div>
-              <div style="display:flex; flex-direction:column; align-items:center; width:12%;">
-                <div style="background:#4361ee; width:100%; height:120px; border-radius:4px 4px 0 0; text-align:center; color:white; font-size:9pt; padding-top:5px;">1.2M</div>
-                <span style="font-size:10pt; margin-top:8px; color:#555;">Thứ 5</span>
-              </div>
-              <div style="display:flex; flex-direction:column; align-items:center; width:12%;">
-                <div style="background:#4361ee; width:100%; height:150px; border-radius:4px 4px 0 0; text-align:center; color:white; font-size:9pt; padding-top:5px;">1.5M</div>
-                <span style="font-size:10pt; margin-top:8px; color:#555;">Thứ 6</span>
-              </div>
-              <div style="display:flex; flex-direction:column; align-items:center; width:12%;">
-                <div style="background:#e67e22; width:100%; height:180px; border-radius:4px 4px 0 0; text-align:center; color:white; font-size:9pt; padding-top:5px;">1.8M</div>
-                <span style="font-size:10pt; margin-top:8px; color:#555;">Thứ 7</span>
-              </div>
-              <div style="display:flex; flex-direction:column; align-items:center; width:12%;">
-                <div style="background:#e67e22; width:100%; height:195px; border-radius:4px 4px 0 0; text-align:center; color:white; font-size:9pt; padding-top:5px;">2.1M</div>
-                <span style="font-size:10pt; margin-top:8px; color:#555;">Chủ Nhật</span>
-              </div>
-            </div>
+          <div class="layout-left table-container chart-section">
+            <h3><i class="ri-bar-chart-line"></i> Thống kê doanh thu thực tế theo các ngày</h3>
+            <div id="weekly-chart-container" class="weekly-chart-box"></div>
           </div>
 
           <div class="layout-right summary-card">
-            <h3>Hoạt động gần đây</h3>
-            <ul style="list-style: none; padding: 0; margin-top: 15px; line-height: 2.2; font-size: 11pt;">
-              <li><i class="ri-checkbox-circle-fill" style="color:#2ecc71;"></i> Đã đối soát doanh thu MoMo tuần 3</li>
-              <li><i class="ri-checkbox-circle-fill" style="color:#2ecc71;"></i> Xuất hóa đơn đỏ VAT cho khách công ty</li>
-              <li><i class="ri-error-warning-fill" style="color:#f1c40f;"></i> Chi phí mua sắm vật tư kho tăng 12%</li>
+            <h3>Trạng thái hoạt động</h3>
+            <ul class="activity-logs-list" id="report-activity-logs">
+              <li><i class="ri-checkbox-circle-fill log-icon-success"></i> Hệ thống vận hành ổn định</li>
+              <li><i class="ri-checkbox-circle-fill log-icon-success"></i> Dữ liệu đồng bộ với LocalStorage</li>
             </ul>
           </div>
         </div>
@@ -315,28 +267,32 @@
           <p>Thiết lập thông tin cửa hàng, hóa đơn và giao diện</p>
         </div>
 
-        <div class="table-container" style="padding: 25px; max-width: 650px;">
-          <form style="display: flex; flex-direction: column; gap: 15px;">
-            <div class="form-group">
-              <label style="font-weight: bold; color: #333; display: block; margin-bottom: 5px;">Tên tiệm giặt ủi</label>
-              <input type="text" value="Laundry Shop - Tuấn Hưng" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+        <div class="table-container" style="max-width: 650px; padding: 30px;">
+          <form id="settings-form">
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 600;">Tên tiệm giặt ủi</label>
+              <input type="text" id="cfg-shop-name" class="form-control" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;" placeholder="Ví dụ: Laundry Shop - Tuấn Hưng">
             </div>
-            <div class="form-group">
-              <label style="font-weight: bold; color: #333; display: block; margin-bottom: 5px;">Địa chỉ hiển thị trên hóa đơn</label>
-              <input type="text" value="Phường 4, Quận 8, TP. Hồ Chí Minh" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 600;">Địa chỉ hiển thị trên hóa đơn</label>
+              <input type="text" id="cfg-shop-address" class="form-control" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;" placeholder="Địa chỉ chi tiết...">
             </div>
-            <div class="form-group">
-              <label style="font-weight: bold; color: #333; display: block; margin-bottom: 5px;">Hotline hỗ trợ khách hàng</label>
-              <input type="text" value="0901 234 567" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 600;">Hotline hỗ trợ khách hàng</label>
+              <input type="text" id="cfg-shop-phone" class="form-control" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;" placeholder="Số điện thoại...">
             </div>
-            <div class="form-group">
-              <label style="font-weight: bold; color: #333; display: block; margin-bottom: 5px;">Chế độ giao diện mặc định</label>
-              <select style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
-                <option>Giao diện Sáng (Light Mode)</option>
-                <option>Giao diện Tối (Dark Mode)</option>
+
+            <div style="margin-bottom: 25px;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 600;">Chế độ giao diện mặc định</label>
+              <select id="cfg-shop-theme" class="form-control" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                <option value="light">Giao diện Sáng (Light Mode)</option>
+                <option value="dark">Giao diện Tối (Dark Mode)</option>
               </select>
             </div>
-            <button type="button" class="btn btn-primary" style="margin-top: 10px; align-self: flex-start;" onclick="alert('Hệ thống: Lưu cấu hình thành công!')">
+
+            <button type="submit" class="btn btn-primary" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px;">
               <i class="ri-save-line"></i> Lưu thay đổi cấu hình
             </button>
           </form>
@@ -434,7 +390,11 @@
     <h3 id="order-modal-title">Thêm Đơn Giặt Ủi Mới</h3>
     <form id="order-form" style="margin-top:16px;">
       <input type="hidden" id="form-order-id">
-      <div class="form-group"><label>Tên khách hàng</label><input type="text" id="form-order-name" required></div>
+      <div class="form-group">
+        <label>Tên khách hàng</label>
+        <select id="form-order-customer-id" required>
+        </select>
+      </div>
       <div class="form-group">
         <label>Dịch vụ</label>
         <select id="form-order-service"></select>
@@ -487,6 +447,48 @@
   </div>
 </div>
 
+<div class="modal" id="inv-modal">
+  <div class="modal-content">
+    <h3 id="inv-modal-title">Nhập Kho Vật Tư Mới</h3>
+    <form id="inv-form" style="margin-top:16px;">
+      <input type="hidden" id="form-inv-id">
+
+      <div class="form-group">
+        <label>Tên nguyên liệu / vật tư</label>
+        <input type="text" id="form-inv-name" placeholder="Ví dụ: Nước xả Comfort" required>
+      </div>
+
+      <div class="form-group">
+        <label>Loại vật tư</label>
+        <select id="form-inv-type">
+          <option value="Bột giặt / Nước giặt">Bột giặt / Nước giặt</option>
+          <option value="Nước xả vải">Nước xả vải</option>
+          <option value="Hóa chất tẩy rửa">Hóa chất tẩy rửa</option>
+          <option value="Vật tư khác">Vật tư khác</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Số lượng tồn kho</label>
+        <input type="text" id="form-inv-qty" placeholder="Ví dụ: 45 Kg, 10 Lít..." required>
+      </div>
+
+      <div class="form-group">
+        <label>Trạng thái kho</label>
+        <select id="form-inv-status">
+          <option value="Còn nhiều">Còn nhiều</option>
+          <option value="Sắp hết">Sắp hết</option>
+          <option value="Cảnh báo hết">Cảnh báo hết</option>
+        </select>
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+        <button type="button" class="btn btn-secondary close-modal-btn">Hủy bỏ</button>
+        <button type="submit" class="btn btn-primary" style="background-color: #e67e22;">Xác nhận</button>
+      </div>
+    </form>
+  </div>
+</div>
 <script src="js/app.js"></script>
 </body>
 </html>
