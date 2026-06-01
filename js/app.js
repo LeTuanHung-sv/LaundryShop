@@ -350,7 +350,7 @@ function initModalControls() {
             e.preventDefault();
             const id = document.getElementById("form-order-id").value;
             const data = {
-                name: document.getElementById("form-order-name").value,
+                name: document.getElementById("form-order-customer-id").value,
                 service: document.getElementById("form-order-service").value,
                 price: document.getElementById("form-order-price").value,
                 status: document.getElementById("form-order-status").value

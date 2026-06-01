@@ -1259,3 +1259,11 @@ body {
     outline: none !important;
     background: transparent;
 }
+
+.status-pending, .status-warning {
+    background-color: #fff3cd; /* Màu nền cam/vàng nhạt */
+    color: #d35400;            /* Màu chữ cam đậm */
+    padding: 4px 8px;          /* Khoảng cách đệm cho bo góc đẹp giống bên xanh */
+    border-radius: 4px;        /* Bo góc nhẹ */
+    font-weight: 600;          /* Chữ đậm lên cho dễ nhìn */
+}
